@@ -8,8 +8,8 @@ import dynamic from "next/dynamic";
 const KakaoMapPage = dynamic(() => import("@/components/kakaomap"), {
   ssr: false,
 });
-const Kakao_SDK_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
-const DynamicScript = dynamic(() => import("next/script"), { ssr: false });
+const Kakao_SDK_URL = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
+
 export default function Home() {
   const [myPosition, setMyPosition] = useState<Position | null>(null);
   const [isKakaoScriptLoaded, setIsKakaoScriptLoaded] = useState(false);
@@ -30,16 +30,19 @@ export default function Home() {
     }
   }, []);
   console.log("Kakao API Key:", process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY);
+  const handleScriptLoad = () => {
+    setIsKakaoScriptLoaded(true);
+  };
   if (myPosition === null) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      <DynamicScript
-        strategy="beforeInteractive"
-        src={`https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`}
-        onLoad={() => setIsKakaoScriptLoaded(true)}
+      <Script
+        src={Kakao_SDK_URL}
+        strategy="afterInteractive"
+        onLoad={handleScriptLoad}
       />
       {isKakaoScriptLoaded && myPosition && (
         <KakaoMapPage initialPosition={myPosition} />
