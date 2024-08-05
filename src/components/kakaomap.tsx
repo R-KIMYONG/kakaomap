@@ -72,7 +72,7 @@ const mapTypes: { id: MapType; label: string }[] = [
 const KakaoMapPage = ({ initialPosition }: KakaoMapPageProps) => {
   useKakaoLoader({
     appkey: process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY as string,
-    libraries: ["clusterer", "drawing", "services"],
+    libraries: ["services"],
   });
   const [markerPosition, setMarkerPosition] = useState<{
     lat: number;

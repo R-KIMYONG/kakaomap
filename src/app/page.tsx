@@ -2,7 +2,9 @@
 import { useEffect, useState } from "react";
 import KakaoMapPage from "@/components/kakaomap";
 import { Position } from "@/types/kakaomap.type";
+import Script from "next/script";
 
+const Kakao_SDK_URL = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
 export default function Home() {
   const [myPosition, setMyPosition] = useState<Position | null>(null);
 
@@ -27,5 +29,10 @@ export default function Home() {
     return <div>Loading...</div>;
   }
 
-  return <KakaoMapPage initialPosition={myPosition} />;
+  return (
+    <>
+      <Script src={Kakao_SDK_URL} strategy="beforeInteractive" />
+      <KakaoMapPage initialPosition={myPosition} />
+    </>
+  );
 }
