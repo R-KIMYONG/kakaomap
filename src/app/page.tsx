@@ -5,11 +5,14 @@ import { Position } from "@/types/kakaomap.type";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 
-const KakaoMapPage = dynamic(() => import('@/components/kakaomap'), { ssr: false })
+const KakaoMapPage = dynamic(() => import("@/components/kakaomap"), {
+  ssr: false,
+});
 const Kakao_SDK_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
+const DynamicScript = dynamic(() => import("next/script"), { ssr: false });
 export default function Home() {
   const [myPosition, setMyPosition] = useState<Position | null>(null);
-
+  const [isKakaoScriptLoaded, setIsKakaoScriptLoaded] = useState(false);
   useEffect(() => {
     if (typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -26,15 +29,19 @@ export default function Home() {
       console.error("예상치못한 에러 발생했습니다.");
     }
   }, []);
-
+  console.log("Kakao API Key:", process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY);
   if (myPosition === null) {
     return <div>Loading...</div>;
   }
 
   return (
     <>
-      <Script src={Kakao_SDK_URL} strategy="beforeInteractive" />
-      <KakaoMapPage initialPosition={myPosition} />
+      <DynamicScript
+        strategy="beforeInteractive"
+        src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`}
+        onLoad={() => setIsKakaoScriptLoaded(true)}
+      />
+      {myPosition && <KakaoMapPage initialPosition={myPosition} />}
     </>
   );
 }
