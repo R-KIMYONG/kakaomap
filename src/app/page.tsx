@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-// import KakaoMapPage from "@/components/kakaomap";
+import KakaoMapPage from "@/components/kakaomap";
 import { Position } from "@/types/kakaomap.type";
 import Script from "next/script";
 import dynamic from "next/dynamic";
 
-const KakaoMapPage = dynamic(() => import("@/components/kakaomap"), {
-  ssr: false,
-});
+// const KakaoMapPage = dynamic(() => import("@/components/kakaomap"), {
+//   ssr: false,
+// });
 const Kakao_SDK_URL = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.NEXT_PUBLIC_KAKAO_MAP_API_KEY}&autoload=false`;
 
 export default function Home() {
@@ -42,9 +42,8 @@ export default function Home() {
       <Script
         src={Kakao_SDK_URL}
         strategy="afterInteractive"
-        onLoad={handleScriptLoad}
       />
-      {isKakaoScriptLoaded && myPosition && (
+      {myPosition && (
         <KakaoMapPage initialPosition={myPosition} />
       )}
     </>
